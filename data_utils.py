@@ -14,13 +14,13 @@ def dice_coef(y_true, y_pred):
     intersection = K.sum(y_true * y_pred)
     return (2. * intersection + K.epsilon()) / (K.sum(y_true) + K.sum(y_pred) + K.epsilon())
 
-def dice_coef_multilabel(y_true, y_pred, numLabels = 5):
+def dice_coef_multilabel(y_true, y_pred, numLabels = 1):
     dice=0
     for index in range(numLabels):
         dice += dice_coef(y_true[:,:,:,index], y_pred[:,:,:,index])
     return dice/numLabels # taking average
 
-def iou_multilabel(y_true, y_pred, numLabels = 5):
+def iou_multilabel(y_true, y_pred, numLabels = 1):
     iou_sum=0
     for index in range(numLabels):
         iou_sum += iou(y_true[:,:,:,index], y_pred[:,:,:,index])
@@ -99,27 +99,27 @@ def plot_loss(history, title = None):
 
 def combine_mask(mask):
     #SPINAL CORD
-    tmp_LL = np.zeros((512, 512, 3), dtype = np.uint8)
+    tmp_LL = np.zeros((mask.shape[0], mask.shape[1], 3), dtype = np.uint8)
     tmp_LL[:, :, 0] = (mask[:, :, 0]*255).astype(np.uint8)
     tmp_LL[:, :, 1] = tmp_LL[:, :, 0].astype(np.uint8)
     tmp_LL[:, :, 2] = tmp_LL[:, :, 0].astype(np.uint8)
     #LEFT LUNG
-    tmp_LR = np.zeros((512, 512, 3), dtype = np.uint8)
+    tmp_LR = np.zeros((mask.shape[0], mask.shape[1], 3), dtype = np.uint8)
     tmp_LR[:, :, 0] = (mask[:, :, 1]).astype(np.uint8)
     tmp_LR[:, :, 1] = (tmp_LR[:, :, 0]*179).astype(np.uint8)
     tmp_LR[:, :, 2] = (tmp_LR[:, :, 0]*255).astype(np.uint8)
     tmp_LR[:, :, 0] = (tmp_LR[:, :, 0]*0).astype(np.uint8)
     #RIGHT LUNG
-    tmp_E = np.zeros((512, 512, 3), dtype = np.uint8)
+    tmp_E = np.zeros((mask.shape[0], mask.shape[1], 3), dtype = np.uint8)
     tmp_E[:, :, 0] = (mask[:, :, 2]).astype(np.uint8)
     tmp_E[:, :, 1] = (tmp_E[:, :, 0]*105)
     tmp_E[:, :, 2] = (tmp_E[:, :, 0]*182)
     tmp_E[:, :, 0] = (tmp_E[:, :, 0]*93)
     #HEART
-    tmp_H = np.zeros((512, 512, 3), dtype = np.uint8)
+    tmp_H = np.zeros((mask.shape[0], mask.shape[1], 3), dtype = np.uint8)
     tmp_H[:, :, 0] = (mask[:, :, 3]*255).astype(np.uint8)
     #ESOPHAGUS
-    tmp_S = np.zeros((512, 512, 3), dtype = np.uint8)
+    tmp_S = np.zeros((mask.shape[0], mask.shape[1], 3), dtype = np.uint8)
     tmp_S[:, :, 0] = (mask[:, :, 4]).astype(np.uint8)
     tmp_S[:, :, 1] = (tmp_S[:, :, 0]*153).astype(np.uint8)
     tmp_S[:, :, 2] = (tmp_S[:, :, 0]*153).astype(np.uint8)
